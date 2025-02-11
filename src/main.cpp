@@ -117,6 +117,7 @@ void loop() {
     Serial.printf("This: %d\r\n",thiss);
     PCF.write(6,thiss);
   }
+  if(PCF.read(8)) PCF.write(5,1); else PCF.write(5,0); 
 }
 
 // put function definitions here:
