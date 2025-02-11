@@ -95,10 +95,28 @@ Serial.print("PCF8575_LIB_VERSION:\t");
   MDNS.addService("http", "tcp", 80);
   Serial.println("HTTP service added");
 
+//  PCF.write(0,0);
+//  PCF.write(1,0);
+//  PCF.write(2,0);
+//  PCF.write(3,0);
+//  PCF.write(4,0);
+//  PCF.write(5,0);
+  PCF.write(6,1);
+  PCF.write(7,0);
+
 }
 
+int last=0;
+
 void loop() {
+  int thiss;
   server.handleClient();        // handle any pending HTTP requests     
+  thiss=PCF.read(11);
+  if(thiss!=last) {
+    last=thiss;
+    Serial.printf("This: %d\r\n",thiss);
+    PCF.write(6,thiss);
+  }
 }
 
 // put function definitions here:
