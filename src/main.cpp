@@ -11,6 +11,7 @@
 
 
 //  adjust addresses if needed
+#include "PCF8575.h"
 PCF8575 PCF(0x20);
 WebServer server(80);
 extern void InitServer(void);
@@ -103,6 +104,9 @@ Serial.print("PCF8575_LIB_VERSION:\t");
 //  PCF.write(5,0);
   PCF.write(6,1);
   PCF.write(7,0);
+
+  Serial.printf("Read:  8 %d\r\n",PCF.read(8));
+  Serial.printf("Read: 11 %d\r\n",PCF.read(11));
 
 }
 
