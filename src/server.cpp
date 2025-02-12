@@ -12,6 +12,8 @@ extern WebServer server;
 
 #define HTML_FILE       0
 #define TEXT_FILE       1
+#define CSS_FILE        2
+#define JS_FILE         3
 #define MAX_CSTR      256
 #define FILESYSTEM SPIFFS
 
@@ -62,11 +64,15 @@ int serveFile(char *filename,int plaintext)
   Serial.printf("SERVE FILE: %s\r\n",filename);
   if(readFile(FILESYSTEM,filename))
   {
-      if(plaintext==1)
+      if(plaintext==TEXT_FILE)
           server.send_P(200,"text/plain",FileData,FileSize);
-      else
+      else if(plaintext==HTML_FILE)
           server.send(200,"text/html",FileData);
-  
+        else if(plaintext==CSS_FILE)
+          server.send(200,"text/css",FileData);
+        else if(plaintext==JS_FILE)
+          server.send_P(200,"text/plain",FileData,FileSize);
+
     freeFile();
     return 0;
   }
@@ -166,6 +172,8 @@ void InitServer(void){
 
   server.on("/",                  [](){ handleFilename((char *)"/index.html",HTML_FILE);   }); 
   server.on("/index.html",        [](){ handleFilename((char *)"/index.html",HTML_FILE);    });
+  server.on("/index.css",        [](){ handleFilename((char *)"/index.css", CSS_FILE);    });
+  server.on("/index.js",        [](){ handleFilename((char *)"/index.js",  JS_FILE);    });
 
 
   server.on("/setpin",           SetPin       );
