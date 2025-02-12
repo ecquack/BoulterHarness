@@ -178,9 +178,9 @@ Serial.print("PCF8575_LIB_VERSION:\t");
 int last=0;
 
 void loop() {
-  return;
   int thiss,tthat;
   server.handleClient();        // handle any pending HTTP requests     
+  return;
   thiss=ReadPCF(64+11);
   if(thiss!=last) {
     last=thiss;
