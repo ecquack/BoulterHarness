@@ -25,3 +25,21 @@ inverters.
 
 When reading the state, they are normally pulled high. Shorting the pin to ground will give a reading of 1, thus reads are also inverted.
 
+HTTP endpoints:
+
+/               serves file index.html from SPIFFS partition
+/index.html     serves file index.html from SPIFFS partition
+/setpin?pin= < pin > & val = < val >
+
+    Example:
+
+    htester.local/setpin?pin=20&val=1
+
+    will set pin number 4 on GPIO chip number two.
+
+/getpin?pin= < pin >
+
+    Example:
+
+    htester.local/getpin?pin=2
+    

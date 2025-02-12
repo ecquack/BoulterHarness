@@ -5,8 +5,8 @@
 #include "SPIFFS.h"
 
 
-#include "PCF8575.h"
-extern PCF8575 PCF;
+extern void WritePCF(int pin,int val);
+extern int ReadPCF(int pin);
 
 extern WebServer server;
 
@@ -25,13 +25,6 @@ void freeFile(void)
   FileSize=0;
 }
 
-void SetPinPCF(int pin,int val){
-
-    if(pin<16)
-        PCF.write(pin,val);
-    else
-        Serial.printf("Set Pin %d out of range\r\n",pin);
-}
 
 
 int readFile(fs::FS &fs, const char * path){
@@ -114,7 +107,28 @@ void handleFilename(char *filename,int plaintext)
 }
 
 
-void ChangePin()
+void GetPin()
+{
+    String sbuffer,numstr,valstr;
+    int pinnum,pinval;
+
+   if(server.args()) {
+    if(server.argName(0)=="pin") {
+            numstr=server.arg(0);
+            pinnum=numstr.toInt();
+            pinval=ReadPCF(pinnum);
+        Serial.printf("Reading PIN %d as %d\r\n",pinnum,pinval);
+
+            sbuffer=pinval;
+            server.send(200,"text/plain",sbuffer);  
+
+    }
+    else Serial.printf("First arg not pin (%s)\r\n",server.argName(0));
+   }
+   else Serial.println("No pin specified");
+}
+
+void SetPin()
 {
   String sbuffer,numstr,valstr;
   int pinnum,pinval;
@@ -133,11 +147,9 @@ void ChangePin()
         Serial.printf("Setting PIN %d to %d\r\n",pinnum,pinval);
 
         valstr=server.arg(1);
-        SetPinPCF(pinnum,pinval);
+        WritePCF(pinnum,pinval);
       }
-
       else Serial.printf("Second arg not val (%s)\r\n",server.argName(1));
-
     }
     else Serial.printf("First arg not pin (%s)\r\n",server.argName(0));
   }
@@ -156,7 +168,8 @@ void InitServer(void){
   server.on("/index.html",        [](){ handleFilename((char *)"/index.html",HTML_FILE);    });
 
 
-  server.on("/setpin",           ChangePin       );
+  server.on("/setpin",           SetPin       );
+  server.on("/getpin",           GetPin       );
 //server.on("/writeone",          WriteOne      );
  
 // 404 code- searches for file and serves as HTML or give error page
