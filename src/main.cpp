@@ -140,10 +140,55 @@ int ReadPCF(int pin) {
   if(device==6) val=PCF6.read(ppin);
   if(device==7) val=PCF7.read(ppin);
 
-  Serial.printf("Read device %d pin %d as %d\r\n",device,ppin,val);
+  //Serial.printf("Read device %d pin %d as %d\r\n",device,ppin,val);
 
   return val;
 }
+
+void PairScan(void) {
+  // set all pins high
+  for(int index=0;index<64;index++) {
+    WritePCF(index,1);
+  }
+
+  for(int outpin=0;outpin<64;outpin++) {
+    WritePCF(outpin,0);
+    Serial.printf("%02d",outpin);
+    for(int inpin=0;inpin<64;inpin++)
+    {
+      if(inpin!=outpin)
+        if(ReadPCF(inpin)==0) Serial.printf(",%02d",inpin);
+    }
+    Serial.println();
+    WritePCF(outpin,1);
+  }
+}
+
+int ReverseLowScan(void) {
+  for(int index=0;index<32;index++) {
+    if(ReadPCF(index)==0) return index;
+  }
+  return -1;
+}
+
+void ReversePairScan(void) {
+  // set all pins high
+  for(int index=0;index<64;index++) {
+    WritePCF(index,1);
+  }
+
+  //for(int outpin=32;outpin<64;outpin++) {
+  //  Serial.printf("%02d,%02d\r\n",outpin,ReverseLowScan());
+  // }
+  Serial.println("Test");
+
+  for(int outpin=32;outpin<64;outpin++) {
+    WritePCF(outpin,0);
+    Serial.printf("%02d,%02d\r\n",outpin,ReverseLowScan());
+    WritePCF(outpin,1);
+  }
+}
+
 
 void setup() {
   // put your setup code here, to run once:
@@ -172,6 +217,11 @@ Serial.print("PCF8575_LIB_VERSION:\t");
   WritePCF(64+5,1);
   WritePCF(64+6,0);
   WritePCF(64+7,0);
+
+  Serial.println("Pair Scan");
+  PairScan();
+  //Serial.println("Reverse Pair Scan");
+  //ReversePairScan();
 
 }
 
