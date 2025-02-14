@@ -10,7 +10,7 @@
 #include <vector>
 
 
-const char *PinDescriptions[]={
+const char *PinDescriptions[]={ // pin description/name followed by connector description/name
   "pendant stop","35",// 0
   "pendant start","35",//1
   "pendant jog","35",//2
@@ -37,12 +37,12 @@ const char *PinDescriptions[]={
   "n.c.","35",//23
   "stacker int","35",//24
   "stacker E-stop","35",//25
-  "n.c.","35",//26
-  "n.c.","35",//27
-  "n.c.","35",//28
-  "n.c.","35",//29
-  "n.c.","35",//30
-  "n.c.","35",//31
+  "n.c.","",//26
+  "n.c.","",//27
+  "n.c.","",//28
+  "n.c.","",//29
+  "n.c.","",//30
+  "n.c.","",//31
   // outputs 
   "pendant red","purple",//32
   "pendant GND","purple",//33
@@ -78,6 +78,13 @@ const char *PinDescriptions[]={
   "interlock cycle stop GND","yellow",//63
   "Sixty four error","error"
 };
+
+//
+// wiring harness map for Boutler Egg Packer 
+// -1 means N.C.
+//
+
+
 
 int KnownGood[]={
   0,39,-1,-1,
