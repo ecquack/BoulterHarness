@@ -43,32 +43,3 @@ HTTP endpoints:
 
     htester.local/getpin?pin=2
 
-
-
-    Pin test algorithm:
-
-    Each wire in the harness has a master end and a slave end. The master end is (typically) in the 36-pin circular connector.
-    Each wire in the harness requires a pull up resistor (it can go to either end). 10K or 100K will suffice.
-
-    1. Set both master and slave GPIO pins to high. Might as well do every pin on every GPIO at this point.
-    2. Read both master and slave GPIO pins and verify that they're high. This detects shorts to ground,
-        and the test fails if either is low
-    3. Set master to low.
-    4. Read slave. If it is not low, the test fails.
-    5. Set master to high
-    6. Set slave to low
-    7. Read master. If it is not low, the test fails.
-    8. Set slave back to high.
-
-    We need to install 16 pull up resistors, and we need to create a pin map. If we assume the cable is known good, we can
-    automate the creation of the pin map!!!!! 
-
-    Automatic pin mapping algorithm:
-
-    1. Install 32 pull up resistors on GPIO boards b000 and b001
-    2. Set all 64 GPIO pins to high.
-    3. Scan through boards b000 and b001, setting one pin low at a time.
-    4. For each low pin, read through boards b002 and b003 looking for a low output.
-        This is the matching slave pin.
-
-        
