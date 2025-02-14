@@ -10,6 +10,75 @@
 #include <vector>
 
 
+int KnownGood[]={
+ 0,39,-1,-1,
+ 1,34,-1,-1,
+ 2,35,-1,-1,
+ 3,32,-1,-1,
+ 4,36,-1,-1,
+ 5,37,-1,-1,
+ 6,-1,-1,-1,
+ 7,48,59,-1,
+ 8,52,63,-1,
+ 9,-1,-1,-1,
+10,47,-1,-1,
+11,38,-1,-1,
+12,33,-1,-1,
+13,44,-1,-1,
+14,-1,-1,-1,
+15,50,57,-1,
+16,54,61,-1,
+17,51,-1,-1,
+18,60,-1,-1,
+19,55,-1,-1,
+20,53,-1,-1,
+21,-1,-1,-1,
+22,-1,-1,-1,
+23,-1,-1,-1,
+24,58,-1,-1,
+25,56,-1,-1,
+26,-1,-1,-1,
+27,-1,-1,-1,
+28,-1,-1,-1,
+29,-1,-1,-1,
+30,-1,-1,-1,
+31,-1,-1,-1,
+32, 3,-1,-1,
+33,12,-1,-1,
+34, 1,-1,-1,
+35, 2,-1,-1,
+36, 4,-1,-1,
+37, 5,-1,-1,
+38,11,-1,-1,
+39, 0,-1,-1,
+40,-1,-1,-1,
+41,-1,-1,-1,
+42,-1,-1,-1,
+43,-1,-1,-1,
+44,13,-1,-1,
+45,-1,-1,-1,
+46,-1,-1,-1,
+47,10,-1,-1,
+48, 7,59,-1,
+49,-1,-1,-1,
+50,15,57,-1,
+51,17,-1,-1,
+52, 8,63,-1,
+53,20,-1,-1,
+54,16,61,-1,
+55,19,-1,-1,
+56,25,-1,-1,
+57,15,50,-1,
+58,24,-1,-1,
+59, 7,48,-1,
+60,18,-1,-1,
+61,16,54,-1,
+62,-1,-1,-1,
+63, 8,52,-1
+};
+
+
+
 //  adjust addresses if needed
 #include "PCF8575.h"
 
@@ -164,32 +233,41 @@ void PairScan(void) {
   }
 }
 
-int ReverseLowScan(void) {
-  for(int index=0;index<32;index++) {
-    if(ReadPCF(index)==0) return index;
-  }
-  return -1;
-}
+int ComparisonScan(void) {
 
-void ReversePairScan(void) {
+  int comparison[4],cdex,errorcount=0;
   // set all pins high
   for(int index=0;index<64;index++) {
     WritePCF(index,1);
   }
 
-  //for(int outpin=32;outpin<64;outpin++) {
-  //  Serial.printf("%02d,%02d\r\n",outpin,ReverseLowScan());
-  // }
-  Serial.println("Test");
 
-  for(int outpin=32;outpin<64;outpin++) {
+  for(int outpin=0;outpin<64;outpin++) {
     WritePCF(outpin,0);
-    Serial.printf("%02d,%02d\r\n",outpin,ReverseLowScan());
+    for(cdex=0;cdex<4;cdex++) comparison[cdex]=-1;
+    cdex=0;
+    comparison[cdex++]=outpin;
+    for(int inpin=0;inpin<64;inpin++)
+    {
+      if(inpin!=outpin)
+        if(ReadPCF(inpin)==0) {
+          comparison[cdex++]=inpin;
+        }
+    }
+    int bad=0;
+    for(cdex=0;cdex<4;cdex++) {
+      if(KnownGood[outpin*4+cdex]!=comparison[cdex]) bad++;
+      }
+      {
+    if(bad) { 
+      Serial.printf("%02d,%02d,%02d,%02d\r\n",comparison[0],comparison[1],comparison[2],comparison[3]);
+      errorcount++;
+    }
+    }
     WritePCF(outpin,1);
   }
+  return errorcount;
 }
-
-
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -218,11 +296,12 @@ Serial.print("PCF8575_LIB_VERSION:\t");
   WritePCF(64+6,0);
   WritePCF(64+7,0);
 
-  Serial.println("Pair Scan");
-  PairScan();
-  //Serial.println("Reverse Pair Scan");
-  //ReversePairScan();
+  //Serial.println("Pair Scan");
+  //PairScan();
 
+  Serial.println("Comparison Scan");
+  int compareresult=ComparisonScan();
+  Serial.printf("Scan complete, %d errors\r\n",compareresult);
 }
 
 int last=0;
