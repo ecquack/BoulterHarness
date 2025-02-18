@@ -1,20 +1,19 @@
 # BoulterHarness
 
-This is the wiring harness tester controller software for Boulter Machine Works. 
+This is the egg packer wiring harness tester controller software for Boulter Machine Works. 
 It is of no use to you unless you are Colby, but there's nothing particularly proprietary in here
 so feel free to have a look.
 
-It runs on an Adafruit Huzzah32 EPS32 Feather, your basic original ESP32 board with a USB to serial converter on the board. 4MB flash, no PSRAM, dual core CPU.
+It runs on an Adafruit Huzzah32 EPS32 Feather, your basic original ESP32 board with a USB to serial converter on the board. 4MB flash, no PSRAM, dual core CPU. Massive overkill for this job, but we wanted the WiFi interface for the web server.
 
 It uses the SPIFFS filing system. It is important to load the file system image in addition to the firmware.
 If you switch to an ESP32-S2 board you'll have to use FATFS. 
 
+This project is built using PlatformIO run from VS Code. It uses the Arduino framework and some Arduino libraries.
 
-It uses the I2C bus to attach to a string of PCF8575 GPIO extenders. This provides 64 pins which are used to energize and sense the connections on the wiring harness. Each IO extender has 16 GPIO pins in two banks of 8. I2C addresses can be from 0x20 to 0x27. 
+It uses the I2C bus to attach to a string of four PCF8575 GPIO extenders. This provides 64 pins which are used to energize and sense the connections on the wiring harness, as each IO extender has 16 GPIO pins in two banks of 8. I2C addresses can be from 0x20 to 0x27. We're using 0x20-0x23. If we had a more complex wiring harness we could add another 64 wire endpoints. 
 
-The web based control interface appears on "htester.local" via mDNS on the local internal network. It usess port 80.
-
-The web server code is limited by available memory- it is not smart enough to serve files larger than will fit in the available RAM.
+The web based control interface appears on "http://htester.local" via mDNS on the local internal network. It uses port 80.
 
 Note:
 
@@ -43,3 +42,6 @@ HTTP endpoints:
 
     htester.local/getpin?pin=2
 
+/scan       returns a JSON file with a list of scan errors to report (or zero if it passes)
+
+To adapt this to your own wiring harness, hook up the harness and call the function PairScan(). Place the results into the KnownGood[] array. Add descriptions of the pins and connectors to the PinDescription[] array. Note that we assume that any one pin will not be connected to more than 3 other pins. If your harness is more complex (lots of shared grounds, etc.) then you'll need to widen the KnownGood array. 

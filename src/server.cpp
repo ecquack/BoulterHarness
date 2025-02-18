@@ -170,6 +170,31 @@ void SetPin()
 
 }
 
+
+#include "json.hpp"
+using json = nlohmann::json;
+
+
+extern int KnownGood[];
+
+
+void GetMap(void) {
+  json refresh;
+   
+   String index_string;
+
+  for(int index=0;index<64;index++) {
+    index_string=index;
+    std::string nought=std::to_string(index);
+    refresh[nought]={KnownGood[index*4+1],KnownGood[index*4+2],KnownGood[index*4+3]};
+  }
+
+  std::string refresh_std =refresh.dump(1);
+  String refresh_string=String(refresh_std.c_str());
+
+  server.send(200,"application/json",refresh_string);
+}
+
 void InitServer(void){
   
   server.enableCORS();
@@ -184,6 +209,7 @@ void InitServer(void){
 
   server.on("/setpin",           SetPin       );
   server.on("/getpin",           GetPin       );
+  server.on("/getmap",         GetMap       );
 //server.on("/writeone",          WriteOne      );
  
 // 404 code- searches for file and serves as HTML or give error page
