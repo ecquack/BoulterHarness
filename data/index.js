@@ -27,6 +27,17 @@ async function DoScan()
 	preid=document.getElementById("scan_result");
 	preid.innerHTML=scandata;
 	console.log("Displayed scan");
+	
+	passfail=document.getElementById("passfail");
+	if(scandata[0]=="G") {
+		passfail.innerHTML="FAIL";
+		passfail.setAttribute("style","color:red;");
+	}
+	else {
+		passfail.innerHTML="PASS";
+		passfail.setAttribute("style","color:green;");
+
+	}
 }
 
 window.addEventListener('load', function () {

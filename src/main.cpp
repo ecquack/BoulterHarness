@@ -366,7 +366,8 @@ String ComparisonScan() {
     
     WritePCF(outpin,1);
   }
-  sprintf(sbuffer,"\r\nScan complete, %d errors %d milliseconds elapsed\r\n%d connections detected %d connections tested\r\n",errorcount,millis()-mill,connections,tests);
+  if(errorcount==0) results="";
+  sprintf(sbuffer,"\r\nScan complete, %d errors\r\n\r\n%d milliseconds elapsed\r\n%d connections tested \r\n%4d connections detected\r\n",errorcount,millis()-mill,tests,connections);
 
   results=results+sbuffer;
 

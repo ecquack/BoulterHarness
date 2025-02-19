@@ -11,12 +11,22 @@
     <body>
         <img class="screen_black" src="/logoblack.png">
         <img class="print_white" src="/logo.png">
-        <div id="time_display">Time Goes Here</div>
-        <h1>Packer Wiring Harness Tester.</h1>
-        <button class="scan_button" onclick="DoScan()">SCAN</button>
+        <div id="time_display">Time Pending</div>
+        <h1>Egg Packer Wiring Harness Test</h1>
+        <table>
+            <tr>
+                <td><label class="serial">Serial Number</label></td>
+                <td><input class="serial" type="text"></td>
+            </tr><tr>
+                <td><label class="tech">Technician</label></td>
+                <td><input class="tech" type="text"></td>
+            </tr>
+        </table>
+        <button class="scan_button" onclick="DoScan()">SCAN</button><br>
         <pre id="scan_result">
-Click "SCAN" to run test.
+            
         </pre>
+        <H1 id="passfail" class="passfail"></H1>
     </body>
     <script src="index.js"></script>		
 
