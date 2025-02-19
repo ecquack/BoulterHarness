@@ -11,72 +11,72 @@
 
 
 const char *PinDescriptions[]={ // pin description/name followed by connector description/name
-  "pendant stop","35",// 0
-  "pendant start","35",//1
-  "pendant jog","35",//2
-  "pendant red","35",//3
-  "pendant green","35",//4
-  "pendant alarm","35",//5
-  "chassis ground","35",//6
-  "interlock stop +24","35",//7
-  "interlock stop gnd","35",//8
-  "n.c.","35",//9
-  "clutch switched gnd","35",//10
-  "pendant +24v","35",//11
-  "pendant gnd","35",//12
-  "clutch power","35",//13
-  "n.c.","35",//14
-  "missing flat/egg +24","35",//15
-  "missing flat/egg gnd","35",//16
-  "cycle stop","35",//17
-  "missing flat","35",//18
-  "missing egg","35",//19
-  "missing egg extra","35",//20
-  "n.c.","35",//21
-  "n.c.","35",//22
-  "n.c.","35",//23
-  "stacker int","35",//24
-  "stacker E-stop","35",//25
-  "n.c.","",//26
-  "n.c.","",//27
-  "n.c.","",//28
-  "n.c.","",//29
-  "n.c.","",//30
-  "n.c.","",//31
+  "pendant stop","circular","black/red",// 0
+  "pendant start","circular","black/white",//1
+  "pendant jog","circular","black",//2
+  "pendant red","circular","white/red",//3
+  "pendant green","circular","white",//4
+  "pendant alarm","circular","white/black",//5
+  "chassis ground","circular","green",//6
+  "interlock stop +24","circular","orange/black",//7
+  "interlock stop gnd","circular","blue/black",//8
+  "n.c.","circular","",//9
+  "clutch switched gnd","circular","black",//10
+  "pendant +24v","circular","orange",//11
+  "pendant gnd","circular","blue",//12
+  "clutch power","circular","brown",//13
+  "n.c.","circular","",//14
+  "missing flat/egg +24","circular","orange/red",//15
+  "missing flat/egg gnd","circular","blue/red",//16
+  "cycle stop","circular","green",//17
+  "missing flat","circular","red",//18
+  "missing egg","circular","red/black",//19
+  "flow control","circular","red/white",//20
+  "n.c.","circular","",//21
+  "n.c.","circular","",//22
+  "n.c.","circular","",//23
+  "stacker int","circular","green/black",//24
+  "stacker E-stop","circular","green/white",//25
+  "n.c.","","",//26
+  "n.c.","","",//27
+  "n.c.","","",//28
+  "n.c.","","",//29
+  "n.c.","","",//30
+  "n.c.","","",//31
   // outputs 
-  "pendant red","purple",//32
-  "pendant GND","purple",//33
-  "pendant start","purple",//34
-  "pendant job","purple",//35
-  "pendant green","purple",//36
-  "pendant alarm","purple",//37
-  "pendant +24V","purple",//38
-  "pendant stop","purple",//39
-  "n.c.","",//40
-  "n.c.","",//41
-  "n.c.","",//42
-  "n.c.","",//43
-  "clutch power","red",//44
-  "n.c.","",//45
-  "n.c.","",//46
-  "clutch switched GND","red",//47
-  "interlock stop +24V","orange",//48
-  "n.c","",//49
-  "missing flat +24V","orange",//50
-  "missing flat GND","orange",//51
-  "interlock cycle stop GND","blue",//52
-  "missing egg extra","blue",//53
-  "missing egg GND","blue",//54
-  "missing egg","blue",//55
-  "stacker ","black",//56
-  "missing egg +24V","black",//57
-  "stacker int","black",//58
-  "interlock stop +24V","black",//59
-  "missing flat","yellow",//60
-  "missing flat egg GND","yellow",//61
-  "n.c.","",//62
-  "interlock cycle stop GND","yellow",//63
-  "Sixty four error","error"
+  "pendant red",  "purple","brown (alt. white)",//32
+  "pendant gnd",  "purple","violet (alt. blue)",//33
+  "pendant start","purple","blue (alt. green)",//34
+  "pendant jog",  "purple","black (alt. yellow)",//35
+  "pendant green","purple","pink",//36
+  "pendant alarm","purple","violet (alt. blue)",//37
+  "pendant +24V", "purple","white (alt. brown)",//38
+  "pendant stop", "purple","orange (alt. red)",//39
+  "n.c.","","",//40
+  "n.c.","","",//41
+  "n.c.","","",//42
+  "n.c.","","",//43
+  "clutch power","red","red",//44
+  "n.c.","","",//45
+  "n.c.","","",//46
+  "clutch switched GND","red","black",//47
+  "interlock stop +24V","orange","",//48
+  "n.c","","",//49
+  "missing flat +24V","orange","",//50
+  "missing flat GND","orange","",//51
+  "interlock cycle stop GND","blue","",//52
+  "flow control","blue","",//53
+  "missing egg GND","blue","",//54
+  "missing egg","blue","",//55
+  "stacker ","black","",//56
+  "missing egg +24V","black","",//57
+  "stacker int","black","",//58
+  "interlock stop +24V","black","",//59
+  "missing flat","yellow","",//60
+  "missing flat egg GND","yellow","",//61
+  "n.c.","","",//62
+  "interlock cycle stop GND","yellow","",//63
+  "Array Overflow","error"
 };
 
 //
@@ -309,14 +309,20 @@ void PairScan(void) {
   }
 }
 
-int ComparisonScan(void) {
+int ComparisonResult[64*4];
 
+#define MAX_STR 256
+
+String ComparisonScan() {
+  int mill=millis();
+  char sbuffer[MAX_STR];
   int comparison[4],cdex,errorcount=0;
+  String results;
+
   // set all pins high
   for(int index=0;index<64;index++) {
     WritePCF(index,1);
   }
-
 
   for(int outpin=0;outpin<64;outpin++) {
     WritePCF(outpin,0);
@@ -331,20 +337,30 @@ int ComparisonScan(void) {
         }
     }
     int bad=0;
-    for(cdex=0;cdex<4;cdex++) {
+    for(cdex=0;cdex<4;cdex++) 
       if(KnownGood[outpin*4+cdex]!=comparison[cdex]) bad++;
-      }
-      {
+      
     if(bad) { 
-      Serial.printf("%02d,%02d,%02d,%02d %-32s %s\r\n",
-        comparison[0],comparison[1],comparison[2],comparison[3],
-        PinDescriptions[comparison[0]*2],PinDescriptions[comparison[0]*2+1]);
+   
+      sprintf(sbuffer,
+      "%02d->%02d,%02d %-32s %-8s %s\r\n",
+      KnownGood[outpin*4+0],KnownGood[outpin*4+1],KnownGood[outpin*4+2],
+ //       comparison[0],comparison[1],comparison[2],comparison[3],
+        PinDescriptions[comparison[0]*3],PinDescriptions[comparison[0]*3+1],PinDescriptions[comparison[0]*3+2]);
+
+      results=results+sbuffer;
+
+
       errorcount++;
     }
-    }
+    
     WritePCF(outpin,1);
   }
-  return errorcount;
+  sprintf(sbuffer,"\r\nScan complete, %d errors %d milliseconds elapsed\r\n",errorcount,millis()-mill);
+
+  results=results+sbuffer;
+
+  return results;
 }
 void setup() {
   // put your setup code here, to run once:
@@ -376,10 +392,9 @@ Serial.print("PCF8575_LIB_VERSION:\t");
 
   //Serial.println("Pair Scan");
   //PairScan();
-
+  int mill=millis();
   Serial.println("Comparison Scan");
-  int compareresult=ComparisonScan();
-  Serial.printf("Scan complete, %d errors\r\n",compareresult);
+  Serial.println(ComparisonScan());
 }
 
 int last=0;

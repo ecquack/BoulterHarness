@@ -6,6 +6,28 @@ async function refresh_clock() {
 
 }
 
+		
+async function sendCommand(full_url)
+{
+	try {
+		let res = await fetch(full_url);
+		return await res.text();
+	} catch (error) {
+		console.log(error);
+	}
+
+}
+
+async function DoScan()
+{
+	console.log("Starting scan");
+	let scandata=await sendCommand("scanreport");
+
+	console.log("Ended scan");
+	preid=document.getElementById("scan_result");
+	preid.innerHTML=scandata;
+	console.log("Displayed scan");
+}
 
 window.addEventListener('load', function () {
 	var fetchInterval = 1000; // 1 second.

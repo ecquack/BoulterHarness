@@ -9,10 +9,22 @@
 
     <body>
         <img src="/logoblack.png">
-        <h1>This is the BMW Harness Tester.</h1>
-        <h2 style="color:cyan;">There are many like it, but this one is mine.</h2>
-        <h2 class="python">And now for something completely different</h2>
         <div id="time_display">Time Goes Here</div>
+        <h1>Packer Wiring Harness Tester.</h1>
+        <button class="scan_button" onclick="DoScan()">SCAN</button>
+        <pre id="scan_result">
+            08->52,63 interlock stop gnd               circular blue/black
+            16->54,61 missing flat/egg gnd             circular blue/red
+            18->60,-1 missing flat                     circular red
+            52->08,63 interlock cycle stop GND         blue     
+            54->16,61 missing egg GND                  blue     
+            60->18,-1 missing flat                     yellow   
+            61->16,54 missing flat egg GND             yellow   
+            63->08,52 interlock cycle stop GND         yellow   
+
+            Scan complete, 8 errors 1477 milliseconds elapsed
+              
+        </pre>
     </body>
     <script src="index.js"></script>		
 

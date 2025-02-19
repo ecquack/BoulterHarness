@@ -42,6 +42,19 @@ HTTP endpoints:
 
     htester.local/getpin?pin=2
 
-/scan       returns a JSON file with a list of scan errors to report (or zero if it passes)
+/scanmap       returns a JSON file with a list of scan errors to report (or zero if it passes)
 
 To adapt this to your own wiring harness, hook up the harness and call the function PairScan(). Place the results into the KnownGood[] array. Add descriptions of the pins and connectors to the PinDescription[] array. Note that we assume that any one pin will not be connected to more than 3 other pins. If your harness is more complex (lots of shared grounds, etc.) then you'll need to widen the KnownGood array. 
+
+
+/getmap
+
+This returns a JSON file with the default KnownGood map of wires and their descriptions. 
+
+/setmap
+
+This accepts a JSON file which overrides the built in wiring map and pin/connector descriptions
+
+/scanmap
+
+This runs a scan and returns a JSON file of success or any errors found

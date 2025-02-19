@@ -177,6 +177,7 @@ using json = nlohmann::json;
 
 extern int KnownGood[];
 
+extern const char *PinDescriptions[];
 
 void GetMap(void) {
   json refresh;
@@ -186,7 +187,7 @@ void GetMap(void) {
   for(int index=0;index<64;index++) {
     index_string=index;
     std::string nought=std::to_string(index);
-    refresh[nought]={KnownGood[index*4+1],KnownGood[index*4+2],KnownGood[index*4+3]};
+    refresh[nought]={KnownGood[index*4+1],KnownGood[index*4+2],KnownGood[index*4+3],PinDescriptions[index*2],PinDescriptions[index*2+1]};
   }
 
   std::string refresh_std =refresh.dump(1);
@@ -194,6 +195,25 @@ void GetMap(void) {
 
   server.send(200,"application/json",refresh_string);
 }
+
+
+void SetMap(void){
+
+}
+
+
+void ScanMap(void){
+
+}
+
+extern String ComparisonScan(void);
+
+void ScanReport(void){
+
+ String sbuffer=ComparisonScan();
+  server.send(200,"text/plain",sbuffer);  
+}
+
 
 void InitServer(void){
   
@@ -207,9 +227,14 @@ void InitServer(void){
   server.on("/logoblack.png",   [](){ handleFilename((char *)"/logoblack.png",  PNG_FILE);    });
 
 
-  server.on("/setpin",           SetPin       );
-  server.on("/getpin",           GetPin       );
-  server.on("/getmap",         GetMap       );
+  server.on("/setpin",            SetPin       );
+  server.on("/getpin",            GetPin       );
+  server.on("/getmap",            GetMap       );
+  server.on("/setmap",            SetMap       );
+  server.on("/scanmap",           ScanMap      );
+  server.on("/scanreport",        ScanReport   );
+  
+
 //server.on("/writeone",          WriteOne      );
  
 // 404 code- searches for file and serves as HTML or give error page
