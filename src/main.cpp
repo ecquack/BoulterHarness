@@ -317,7 +317,12 @@ String ComparisonScan() {
   int mill=millis();
   char sbuffer[MAX_STR];
   int comparison[4],cdex,errorcount=0;
+  int connections=0,tests=0;
   String results;
+
+  results="GPIO MAP  Description                      Connector  Wire \r\n\r\n";
+
+
 
   // set all pins high
   for(int index=0;index<64;index++) {
@@ -332,9 +337,14 @@ String ComparisonScan() {
     for(int inpin=0;inpin<64;inpin++)
     {
       if(inpin!=outpin)
+      {
         if(ReadPCF(inpin)==0) {
           comparison[cdex++]=inpin;
+          connections++;
+        
         }
+        tests++;
+      }
     }
     int bad=0;
     for(cdex=0;cdex<4;cdex++) 
@@ -343,7 +353,7 @@ String ComparisonScan() {
     if(bad) { 
    
       sprintf(sbuffer,
-      "%02d->%02d,%02d %-32s %-8s %s\r\n",
+      "%02d->%02d,%02d %-32s %-10s %s\r\n",
       KnownGood[outpin*4+0],KnownGood[outpin*4+1],KnownGood[outpin*4+2],
  //       comparison[0],comparison[1],comparison[2],comparison[3],
         PinDescriptions[comparison[0]*3],PinDescriptions[comparison[0]*3+1],PinDescriptions[comparison[0]*3+2]);
@@ -356,7 +366,7 @@ String ComparisonScan() {
     
     WritePCF(outpin,1);
   }
-  sprintf(sbuffer,"\r\nScan complete, %d errors %d milliseconds elapsed\r\n",errorcount,millis()-mill);
+  sprintf(sbuffer,"\r\nScan complete, %d errors %d milliseconds elapsed\r\n%d connections detected %d connections tested\r\n",errorcount,millis()-mill,connections,tests);
 
   results=results+sbuffer;
 
@@ -392,9 +402,9 @@ Serial.print("PCF8575_LIB_VERSION:\t");
 
   //Serial.println("Pair Scan");
   //PairScan();
-  int mill=millis();
-  Serial.println("Comparison Scan");
-  Serial.println(ComparisonScan());
+ // int mill=millis();
+ // Serial.println("Comparison Scan");
+ // Serial.println(ComparisonScan());
 }
 
 int last=0;

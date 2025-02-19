@@ -8,3 +8,14 @@ body {
 .python {
     color:red;
 }
+
+@media screen {
+    .print_white
+    { display: none; }
+    
+}
+
+@media print {
+.screen_black
+    { display: none; }
+}
