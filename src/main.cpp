@@ -11,32 +11,32 @@
 
 
 const char *PinDescriptions[]={ // pin description/name followed by connector description/name
-  "pendant stop","circular","black/red",// 0
-  "pendant start","circular","black/white",//1
-  "pendant jog","circular","black",//2
-  "pendant red","circular","white/red",//3
-  "pendant green","circular","white",//4
-  "pendant alarm","circular","white/black",//5
-  "chassis ground","circular","green",//6
-  "interlock stop +24","circular","orange/black",//7
-  "interlock stop gnd","circular","blue/black",//8
+  "1 pendant stop","circular","black/red",// 0
+  "2 pendant start","circular","black/white",//1
+  "3 pendant jog","circular","black",//2
+  "4 pendant red","circular","white/red",//3
+  "5 pendant green","circular","white",//4
+  "6 pendant alarm","circular","white/black",//5
+  "7 chassis ground","circular","green",//6
+  "8 interlock stop +24","circular","orange/black",//7
+  "9 interlock stop gnd","circular","blue/black",//8
   "n.c.","circular","",//9
-  "clutch switched gnd","circular","black",//10
-  "pendant +24v","circular","orange",//11
-  "pendant gnd","circular","blue",//12
-  "clutch power","circular","brown",//13
+  "11 clutch switched gnd","circular","black",//10
+  "12 pendant +24v","circular","orange",//11
+  "13 pendant gnd","circular","blue",//12
+  "14 clutch power","circular","brown",//13
   "n.c.","circular","",//14
-  "missing flat/egg +24","circular","orange/red",//15
-  "missing flat/egg gnd","circular","blue/red",//16
-  "cycle stop","circular","green",//17
-  "missing flat","circular","red",//18
-  "missing egg","circular","red/black",//19
-  "flow control","circular","red/white",//20
+  "16 missing flat/egg +24","circular","orange/red",//15
+  "17 missing flat/egg gnd","circular","blue/red",//16
+  "18 cycle stop","circular","green",//17
+  "19 missing flat","circular","red",//18
+  "20 missing egg","circular","red/black",//19
+  "21 flow control","circular","red/white",//20
   "n.c.","circular","",//21
   "n.c.","circular","",//22
   "n.c.","circular","",//23
-  "stacker int","circular","green/black",//24
-  "stacker E-stop","circular","green/white",//25
+  "34 interlock","circular","green/black",//24
+  "35 interlock n.c.","circular","green/white",//25
   "n.c.","","",//26
   "n.c.","","",//27
   "n.c.","","",//28
@@ -63,7 +63,7 @@ const char *PinDescriptions[]={ // pin description/name followed by connector de
   "interlock stop +24V","orange","",//48
   "n.c","","",//49
   "missing flat +24V","orange","",//50
-  "missing flat GND","orange","",//51
+  "cycle stop","orange","",//51
   "interlock cycle stop GND","blue","",//52
   "flow control","blue","",//53
   "missing egg GND","blue","",//54
