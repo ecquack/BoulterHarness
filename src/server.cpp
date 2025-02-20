@@ -176,6 +176,7 @@ using json = nlohmann::json;
 
 
 extern int KnownGood[];
+extern int TestResult[];
 
 extern const char *PinDescriptions[];
 
@@ -187,7 +188,7 @@ void GetMap(void) {
   for(int index=0;index<64;index++) {
     index_string=index;
     std::string nought=std::to_string(index);
-    refresh[nought]={KnownGood[index*4+1],KnownGood[index*4+2],KnownGood[index*4+3],PinDescriptions[index*2],PinDescriptions[index*2+1]};
+    refresh[nought]={KnownGood[index*4+1],KnownGood[index*4+2],KnownGood[index*4+3],PinDescriptions[index*3],PinDescriptions[index*3+1]};
   }
 
   std::string refresh_std =refresh.dump(1);
@@ -202,8 +203,25 @@ void SetMap(void){
 }
 
 
-void ScanMap(void){
+extern String ComparisonScan(void);
 
+void ScanMap(void){
+  json refresh;
+   
+   String index_string;
+
+  ComparisonScan();
+
+  for(int index=0;index<64;index++) {
+    index_string=index;
+    std::string nought=std::to_string(index);
+    refresh[nought]={TestResult[index*4+1],TestResult[index*4+2],TestResult[index*4+3],PinDescriptions[index*3],PinDescriptions[index*3+1]};
+  }
+
+  std::string refresh_std =refresh.dump(1);
+  String refresh_string=String(refresh_std.c_str());
+
+  server.send(200,"application/json",refresh_string);
 }
 
 extern String ComparisonScan(void);

@@ -152,6 +152,52 @@ int KnownGood[]={
   62,-1,-1,-1,
   63, 8,52,-1
 };
+int TestResult[256];
+
+
+const char *FailNames[]={
+  "purple","pendant",
+  "red","clutch",
+  "yellow","",
+  "black","",
+  "orange","",
+  "blue","",
+  "error","overflow"
+};
+
+int FailList[]={
+
+ 0, 1, 2, 3, 4, 5,11,12, // purple
+10,13,-1,-1,-1,-1,-1,-1, // red
+ 8,16,18,-1,-1,-1,-1,-1, // yellow
+ 7,15,33,34,-1,-1,-1,-1, // black
+ 7,15,17,-1,-1,-1,-1,-1, // orange
+ 8,16,19,20,-1,-1,-1,-1  // blue
+};
+
+int FailArray[6];
+
+
+int FailScan(){
+  for(int connector=0;connector<6;connector++)
+  {
+    FailArray[connector]=0;
+    for(int pin=0;pin<8;pin++) {
+      int xpin=FailList[connector*8+pin];
+      if(xpin>=0)
+      if(xpin<32)
+      if(TestResult[xpin*4+1]==-1) {
+       // Serial.printf("%s %s %d %d\r\n",FailNames[connector*2],FailNames[connector*2+1],connector,xpin);
+        FailArray[connector]++;
+      }
+    }
+  }
+
+//  for(int showfails=0;showfails<6;showfails++) {
+//    if(FailArray[showfails]) Serial.printf("%s is disconnected (%d)\r\n",FailNames[showfails*2],FailArray[showfails]);
+// }
+  return 0;
+}
 
 
 
@@ -170,11 +216,8 @@ PCF8575 PCF5(0x25);
 PCF8575 PCF6(0x26);
 PCF8575 PCF7(0x27);
 
-//PCF8575 blort= new PCF8575(0x20);
-
 WebServer server(80);
 extern void InitServer(void);
-
 
 char HOSTNAME[]="htester";
 char ssid[]="TELUS0609";
@@ -184,7 +227,6 @@ void InitWiFi(void){
   WiFi.mode(WIFI_STA);
   WiFi.setHostname(HOSTNAME);
   WiFi.begin(ssid,password);
-  //WiFi.begin("telus0609", "t6z7gmkhd5");
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -327,6 +369,12 @@ String ComparisonScan() {
   // set all pins high
   for(int index=0;index<64;index++) {
     WritePCF(index,1);
+
+    TestResult[index*4]=-1;
+    TestResult[index*4+1]=-1;
+    TestResult[index*4+2]=-1;
+    TestResult[index*4+3]=-1;
+
   }
 
   for(int outpin=0;outpin<64;outpin++) {
@@ -339,12 +387,13 @@ String ComparisonScan() {
       if(inpin!=outpin)
       {
         if(ReadPCF(inpin)==0) {
+          TestResult[outpin*4+cdex]=inpin;        
           comparison[cdex++]=inpin;
           connections++;
-        
         }
         tests++;
       }
+      else TestResult[outpin*4]=outpin;
     }
     int bad=0;
     for(cdex=0;cdex<4;cdex++) 
@@ -367,12 +416,23 @@ String ComparisonScan() {
     WritePCF(outpin,1);
   }
   if(errorcount==0) results="";
+  else {
+    FailScan();
+    results=results+"\r\n";
+    for(int showfails=0;showfails<6;showfails++) {
+      if(FailArray[showfails]) {
+        sprintf(sbuffer,"%s is disconnected (%d)\r\n",FailNames[showfails*2],FailArray[showfails]);
+        results=results+sbuffer;
+      }
+  }
+  }
   sprintf(sbuffer,"\r\nScan complete, %d errors\r\n\r\n%d milliseconds elapsed\r\n%d connections tested \r\n%4d connections detected\r\n",errorcount,millis()-mill,tests,connections);
 
   results=results+sbuffer;
 
   return results;
 }
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -401,11 +461,9 @@ Serial.print("PCF8575_LIB_VERSION:\t");
   WritePCF(64+6,0);
   WritePCF(64+7,0);
 
-  //Serial.println("Pair Scan");
-  //PairScan();
  // int mill=millis();
  // Serial.println("Comparison Scan");
- // Serial.println(ComparisonScan());
+  Serial.println(ComparisonScan());
 }
 
 int last=0;
