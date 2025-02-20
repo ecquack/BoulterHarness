@@ -170,7 +170,7 @@ int FailList[]={
  0, 1, 2, 3, 4, 5,11,12, // purple
 10,13,-1,-1,-1,-1,-1,-1, // red
  8,16,18,-1,-1,-1,-1,-1, // yellow
- 7,15,33,34,-1,-1,-1,-1, // black
+ 7,15,24,25,-1,-1,-1,-1, // black
  7,15,17,-1,-1,-1,-1,-1, // orange
  8,16,19,20,-1,-1,-1,-1  // blue
 };
@@ -189,6 +189,11 @@ int FailScan(){
       if(TestResult[xpin*4+1]==-1) {
        // Serial.printf("%s %s %d %d\r\n",FailNames[connector*2],FailNames[connector*2+1],connector,xpin);
         FailArray[connector]++;
+      } 
+      //else if(TestResult[xpin*4+2]==-1) 
+      {
+        //Serial.printf("Blah %d\r\n",TestResult[xpin*4+2]);
+        //FailArray[connector]++;
       }
     }
   }
