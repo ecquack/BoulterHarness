@@ -9,6 +9,25 @@
 #include "SPIFFS.h"
 #include <vector>
 
+//
+// network ID and credentials
+//
+
+
+char HOSTNAME[]="htester"; // we are HOSTNAME.local via mDNS
+char ssid[]="TELUS0609";
+char password[]="t6z7gmkhd5";
+
+// SDA is white wire
+// SCL is brown wire
+
+// digitalRead and digitalWrite pin definitions
+
+#define RED_LED     32
+#define WHITE_LED   14
+#define GREEN_LED   15
+#define SCAN_BUTTON 4
+
 
 const char *PinDescriptions[]={ // pin description/name followed by connector description/name
   "1 pendant stop","circular","black/red",// 0
@@ -224,24 +243,29 @@ PCF8575 PCF7(0x27);
 WebServer server(80);
 extern void InitServer(void);
 
-char HOSTNAME[]="htester";
-char ssid[]="TELUS0609";
-char password[]="t6z7gmkhd5";
 
-void InitWiFi(void){
+int InitWiFi(void){
+  int timeout=0;
   WiFi.mode(WIFI_STA);
   WiFi.setHostname(HOSTNAME);
   WiFi.begin(ssid,password);
 
+
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+    if(timeout++>20) {
+      Serial.println("\r\nTimeout: Failed to connect to WiFi");
+      return 0;
+    }
   }
   Serial.println("");
   Serial.print("Connected to ");
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+  return 1;
 }
 
 
@@ -383,6 +407,19 @@ String ComparisonScan() {
   }
 
   for(int outpin=0;outpin<64;outpin++) {
+
+    if(outpin%4>1) {// 10 hertz?
+      digitalWrite(RED_LED,0);
+      digitalWrite(GREEN_LED,1);
+    }
+    else
+    {
+      digitalWrite(RED_LED,1);
+      digitalWrite(GREEN_LED,0);
+
+    }
+
+
     WritePCF(outpin,0);
     for(cdex=0;cdex<4;cdex++) comparison[cdex]=-1;
     cdex=0;
@@ -420,8 +457,14 @@ String ComparisonScan() {
     
     WritePCF(outpin,1);
   }
-  if(errorcount==0) results="";
+  if(errorcount==0){
+     results="";
+      digitalWrite(RED_LED,0);
+      digitalWrite(GREEN_LED,1);
+  }
   else {
+    digitalWrite(RED_LED,1);
+    digitalWrite(GREEN_LED,0);
     FailScan();
     results=results+"\r\n";
     for(int showfails=0;showfails<6;showfails++) {
@@ -479,41 +522,25 @@ Serial.print("PCF8575_LIB_VERSION:\t");
 
 int last=0;
 
-// SDA is white wire
-// SCL is brown wire
-
-
-#define RED_LED     32
-#define WHITE_LED   14
-#define GREEN_LED   15
-#define SCAN_BUTTON 4
 
 
 void loop() {
-  int thiss,tthat;
+
   server.handleClient();        // handle any pending HTTP requests     
 
-  if(digitalRead(4))
-    digitalWrite(32,0);
-  else
-    digitalWrite(32,1);
-
-  digitalWrite(14,1);
-  digitalWrite(15,1);
-
-
-  return;
-
-
-
-
-  thiss=ReadPCF(64+11);
-  if(thiss!=last) {
-    last=thiss;
-    Serial.printf("This: %d\r\n",thiss);
-    WritePCF(64+6,thiss);
+  if(digitalRead(SCAN_BUTTON)==0) {
+    if(last==0)
+    {
+      Serial.println("Comparison Scan");
+      Serial.println(ComparisonScan());
+    }
+    last=1;
   }
-  tthat=ReadPCF(64+8);
- // Serial.printf("That: %d\r\n",tthat); 
-  if(tthat) WritePCF(64+5,1); else WritePCF(64+5,0);
+  else last=0;
+
+if(millis()%1000>800) // blink at 1 hertz 20% duty cycle
+  digitalWrite(WHITE_LED,1);
+  else
+  digitalWrite(WHITE_LED,0);
+  return;
 }
