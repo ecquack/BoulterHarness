@@ -33,11 +33,13 @@ function ShowScan(scandata) {
 		passfail.innerHTML="FAIL";
 		passfail.setAttribute("style","color:red;");
 	}
-	else {
+	else if(scandata[0]=="\r") 
+		{
 		passfail.innerHTML="PASS";
 		passfail.setAttribute("style","color:green;");
-
 	}
+	else passfail.innterHTML=""; // no result yet- fresh reboot
+	// weird case. what's the first character of a pass? carriage return...
 }
 
 async function DoScan()
