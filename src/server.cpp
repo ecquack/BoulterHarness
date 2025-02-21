@@ -251,6 +251,7 @@ void InitServer(void){
   server.on("/index.js",        [](){ handleFilename((char *)"/index.js",       JS_FILE);    });
   server.on("/logo.png",        [](){ handleFilename((char *)"/logo.png",       PNG_FILE);    });
   server.on("/logoblack.png",   [](){ handleFilename((char *)"/logoblack.png",  PNG_FILE);    });
+  server.on("/favicon.ico",     [](){ handleFilename((char *)"/favicon.ico",    PNG_FILE);    });
 
 
   server.on("/setpin",            SetPin       );
