@@ -28,13 +28,21 @@
         <table>
             <tr>
                 <td><label class="serial">Serial Number</label></td>
-                <td><input class="serial" type="text"></td>
+                <td><input class="serial" type="text" value="00000"></td>
             </tr><tr>
                 <td><label class="tech">Technician</label></td>
-                <td><input class="tech" type="text"></td>
+                <td><input list="techs" class="tech" type="text"></td>
+                <datalist id="techs">
+                    <option value="LOVELY"></option>
+                    <option value="MONTGOMERY"></option>
+                    <option value="QUACKENBUSH"></option>
+                </datalist>
             </tr>
         </table>
-        <button class="scan_button" onclick="DoScan()">SCAN</button><br>
+        <table><tr><td></td></tr></table>
+        <button class="scan_button" onclick="DoScan()">SCAN</button>
+        <button class="print_button" onclick="window.print()">PRINT</button>
+        <br>
         <pre id="scan_result">
             
         </pre>

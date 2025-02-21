@@ -27,7 +27,18 @@ When reading the state, they are normally pulled high. Shorting the pin to groun
 HTTP endpoints:
 
 /               serves file index.html from SPIFFS partition
-/index.html     serves file index.html from SPIFFS partition
+
+
+files served from SPIFFS partition:
+
+/index.html
+/index.js
+/index.css
+/logo.png
+/logoblack.png
+/favicon.ico    (broken, 40x40 pixel MS icon format )
+
+
 /setpin?pin= < pin > & val = < val >
 
     Example:
@@ -36,16 +47,15 @@ HTTP endpoints:
 
     will set pin number 4 on GPIO chip number two.
 
+    returns OK
+
 /getpin?pin= < pin >
 
     Example:
 
     htester.local/getpin?pin=2
 
-/scanmap       returns a JSON file with a list of scan errors to report (or zero if it passes)
-
-To adapt this to your own wiring harness, hook up the harness and call the function PairScan(). Place the results into the KnownGood[] array. Add descriptions of the pins and connectors to the PinDescription[] array. Note that we assume that any one pin will not be connected to more than 3 other pins. If your harness is more complex (lots of shared grounds, etc.) then you'll need to widen the KnownGood array. 
-
+    Returns 0 or 1
 
 /getmap
 
@@ -53,8 +63,12 @@ This returns a JSON file with the default KnownGood map of wires and their descr
 
 /setmap
 
-This accepts a JSON file which overrides the built in wiring map and pin/connector descriptions
+This accepts a JSON file which overrides the built in wiring map and pin/connector descriptions (not yet implemented)
 
 /scanmap
 
 This runs a scan and returns a JSON file of success or any errors found
+
+/scanreport
+
+This returns a JSON map of the current wiring harness in place, for comparison with the data returned by /getmap. 

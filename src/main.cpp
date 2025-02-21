@@ -426,12 +426,12 @@ String ComparisonScan() {
     results=results+"\r\n";
     for(int showfails=0;showfails<6;showfails++) {
       if(FailArray[showfails]) {
-        sprintf(sbuffer,"%s is disconnected (%d)\r\n",FailNames[showfails*2],FailArray[showfails]);
+        sprintf(sbuffer,"<h1 style=\"line-height:0px;color:red;\">%s is disconnected (%d)</h1>\r\n",FailNames[showfails*2],FailArray[showfails]);
         results=results+sbuffer;
       }
   }
   }
-  sprintf(sbuffer,"\r\nScan complete, %d errors\r\n\r\n%d milliseconds elapsed\r\n%d connections tested \r\n%4d connections detected\r\n",errorcount,millis()-mill,tests,connections);
+  sprintf(sbuffer,"\r\n<b>Scan complete, %d errors<b>\r\n\r\n%d milliseconds elapsed\r\n%d connections tested \r\n%4d connections detected\r\n",errorcount,millis()-mill,tests,connections);
 
   results=results+sbuffer;
 
@@ -461,6 +461,10 @@ Serial.print("PCF8575_LIB_VERSION:\t");
   MDNS.addService("http", "tcp", 80);
   Serial.println("HTTP service added");
 
+  pinMode(14,OUTPUT);
+  pinMode(32,OUTPUT);
+  pinMode(15,OUTPUT);
+
 
   WritePCF(64+5,1);
   WritePCF(64+6,0);
@@ -468,15 +472,41 @@ Serial.print("PCF8575_LIB_VERSION:\t");
 
  // int mill=millis();
  // Serial.println("Comparison Scan");
-  Serial.println(ComparisonScan());
+ // Serial.println(ComparisonScan());
+ int tBytes = SPIFFS.totalBytes(); int uBytes = SPIFFS.usedBytes();
+ Serial.printf("SPIFFS Total: %d Used: %d Free: %d\r\n",tBytes,uBytes,tBytes-uBytes);
 }
 
 int last=0;
 
+// SDA is white wire
+// SCL is brown wire
+
+
+#define RED_LED     32
+#define WHITE_LED   14
+#define GREEN_LED   15
+#define SCAN_BUTTON 4
+
+
 void loop() {
   int thiss,tthat;
   server.handleClient();        // handle any pending HTTP requests     
+
+  if(digitalRead(4))
+    digitalWrite(32,0);
+  else
+    digitalWrite(32,1);
+
+  digitalWrite(14,1);
+  digitalWrite(15,1);
+
+
   return;
+
+
+
+
   thiss=ReadPCF(64+11);
   if(thiss!=last) {
     last=thiss;

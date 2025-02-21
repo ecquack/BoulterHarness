@@ -21,6 +21,10 @@ body {
     font-size:x-large;
 }
 
+.print_button {
+    font-size:x-large;
+}
+
 .passfail {
     font-size: 144px;
     line-height:24px;
@@ -30,6 +34,12 @@ body {
     .scan_button
     { display: none; }
 }
+
+@media print {
+    .print_button
+    { display: none; }
+}
+
 
 @media screen {
     .print_white
