@@ -522,7 +522,7 @@ Serial.print("PCF8575_LIB_VERSION:\t");
 
 int last=0;
 
-
+String scan_result="";
 
 void loop() {
 
@@ -532,15 +532,20 @@ void loop() {
     if(last==0)
     {
       Serial.println("Comparison Scan");
-      Serial.println(ComparisonScan());
+      Serial.println(scan_result=ComparisonScan());
     }
     last=1;
   }
   else last=0;
 
-if(millis()%1000>800) // blink at 1 hertz 20% duty cycle
-  digitalWrite(WHITE_LED,1);
-  else
-  digitalWrite(WHITE_LED,0);
-  return;
+  if(WiFi.status() != WL_CONNECTED)
+  {
+
+    if(millis()%1000>800) // blink at 1 hertz 20% duty cycle
+      digitalWrite(WHITE_LED,1);
+      else
+      digitalWrite(WHITE_LED,0);
+      return;
+  }
+  else digitalWrite(WHITE_LED,1);
 }

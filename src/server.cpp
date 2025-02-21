@@ -225,13 +225,21 @@ void ScanMap(void){
 }
 
 extern String ComparisonScan(void);
+extern String scan_result;
 
 void ScanReport(void){
 
  String sbuffer=ComparisonScan();
+  scan_result=sbuffer;
   server.send(200,"text/plain",sbuffer);  
 }
 
+String retainedResult="";
+
+void RefreshMap() {
+  server.send(200,"text/plain",scan_result);  
+
+}
 
 void InitServer(void){
   
@@ -251,7 +259,7 @@ void InitServer(void){
   server.on("/setmap",            SetMap       );
   server.on("/scanmap",           ScanMap      );
   server.on("/scanreport",        ScanReport   );
-  
+  server.on("/refresh",           RefreshMap   );
 
 //server.on("/writeone",          WriteOne      );
  

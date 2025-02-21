@@ -4,6 +4,9 @@ async function refresh_clock() {
 	all_now=the_now.split('G');
 	document.getElementById("time_display").innerHTML = all_now[0];//.toString();
 
+	let scandata=await sendCommand("refresh");
+	ShowScan(scandata);
+
 }
 
 		
@@ -18,11 +21,8 @@ async function sendCommand(full_url)
 
 }
 
-async function DoScan()
-{
-	console.log("Starting scan");
-	let scandata=await sendCommand("scanreport");
 
+function ShowScan(scandata) {
 	console.log("Ended scan");
 	preid=document.getElementById("scan_result");
 	preid.innerHTML=scandata;
@@ -38,6 +38,14 @@ async function DoScan()
 		passfail.setAttribute("style","color:green;");
 
 	}
+}
+
+async function DoScan()
+{
+	console.log("Starting scan");
+	let scandata=await sendCommand("scanreport");
+	ShowScan(scandata);
+	
 }
 
 window.addEventListener('load', function () {
