@@ -21,12 +21,11 @@ async function sendCommand(full_url)
 
 }
 
-
 function ShowScan(scandata) {
-	console.log("Ended scan");
+//	console.log("Ended scan");
 	preid=document.getElementById("scan_result");
 	preid.innerHTML=scandata;
-	console.log("Displayed scan");
+//	console.log("Displayed scan");
 	
 	passfail=document.getElementById("passfail");
 	if(scandata[0]=="G") {
@@ -41,6 +40,59 @@ function ShowScan(scandata) {
 	else passfail.innterHTML=""; // no result yet- fresh reboot
 	// weird case. what's the first character of a pass? carriage return...
 }
+
+async function DoSave()
+{
+	console.log("Saving results");
+
+	technician=document.getElementById("technician").value
+	serialnumber=document.getElementById("serialnumber").value
+	passfail=document.getElementById("passfail").innerHTML
+	datetime=document.getElementById("time_display").innerHTML;
+    results=document.getElementById("scan_result").innerHTML;
+	console.log("Saving:")
+	console.log(technician);
+	console.log(serialnumber);
+	console.log(passfail);
+	console.log(datetime);
+	console.log(results);
+
+//  main.js
+ 
+	const formData = new FormData();
+	formData.append("technician", technician);
+	formData.append("serialnumber", serialnumber);
+	formData.append("datetime", datetime);
+	formData.append("passfail", passfail);
+	formData.append("results", results);
+
+// POST request using fetch()
+fetch("http://192.168.1.75:8086/savescan", {
+	mode:  'no-cors' ,
+    
+    // Adding method type
+    method: "POST",
+    
+	body:
+		formData,
+	});
+
+    // Adding body or contents to send
+/*    body: JSON.stringify({
+        technician: "foo",
+        serialnumber: "bar",
+		datetime: "overmorrow",
+		passfail: "pass",
+		results: "zero errors"
+    }),
+  */  
+    // Adding headers to the request
+   // headers: {
+   //     "Content-type": "application/json; charset=UTF-8"
+   // }
+//});
+}
+
 
 async function DoScan()
 {
