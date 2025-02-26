@@ -40,6 +40,12 @@ body {
 }
 
 @media print {
+    .save_button
+    { display: none; }
+}
+
+
+@media print {
     .print_button
     { display: none; }
 }

@@ -67,30 +67,16 @@ async function DoSave()
 	formData.append("results", results);
 
 // POST request using fetch()
-fetch("http://192.168.1.75:8086/savescan", {
+fetch("http://192.168.1.100:8086/savescan", {
 	mode:  'no-cors' ,
     
     // Adding method type
     method: "POST",
     
 	body:
-		formData,
+		formData
 	});
 
-    // Adding body or contents to send
-/*    body: JSON.stringify({
-        technician: "foo",
-        serialnumber: "bar",
-		datetime: "overmorrow",
-		passfail: "pass",
-		results: "zero errors"
-    }),
-  */  
-    // Adding headers to the request
-   // headers: {
-   //     "Content-type": "application/json; charset=UTF-8"
-   // }
-//});
 }
 
 
