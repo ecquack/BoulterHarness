@@ -25,7 +25,8 @@ char password[]="t6z7gmkhd5";
 
 #define RED_LED     32
 #define WHITE_LED   14
-#define GREEN_LED   15
+#define GREEN_LED   32
+
 #define SCAN_BUTTON 4
 
 
@@ -240,6 +241,8 @@ PCF8575 PCF5(0x25);
 PCF8575 PCF6(0x26);
 PCF8575 PCF7(0x27);
 
+int PCFS[8];
+
 WebServer server(80);
 extern void InitServer(void);
 
@@ -291,7 +294,8 @@ void InitMDNS(void) {
 }
 
 void InitPCF(PCF8575 PCF,int msg) {
-if (!PCF.begin())
+  PCFS[msg]=0;
+  if (!PCF.begin())
   {
     Serial.print(msg);
     Serial.println(" => not initialized");
@@ -306,6 +310,7 @@ if (!PCF.begin())
   {
     Serial.print(msg);
     Serial.println(" => connected!!");
+    PCFS[msg]=1;
   }
 
 }
@@ -329,6 +334,8 @@ void WritePCF(int pin,int val) {
   device=pin/16;
   ppin=pin%16;
 
+  if(PCFS[device]) {
+
   if(device==0) PCF0.write(ppin,val);
   if(device==1) PCF1.write(ppin,val);
   if(device==2) PCF2.write(ppin,val);
@@ -337,8 +344,8 @@ void WritePCF(int pin,int val) {
   if(device==5) PCF5.write(ppin,val);
   if(device==6) PCF6.write(ppin,val);
   if(device==7) PCF7.write(ppin,val);
-
-
+  }
+//  else Serial.printf("PCF%d offline\r\n",device);
 }
 
 int ReadPCF(int pin) {
@@ -347,37 +354,51 @@ int ReadPCF(int pin) {
   device=pin/16;
   ppin=pin%16;
 
-  if(device==0) val=PCF0.read(ppin);
-  if(device==1) val=PCF1.read(ppin);
-  if(device==2) val=PCF2.read(ppin);
-  if(device==3) val=PCF3.read(ppin);
-  if(device==4) val=PCF4.read(ppin);
-  if(device==5) val=PCF5.read(ppin);
-  if(device==6) val=PCF6.read(ppin);
-  if(device==7) val=PCF7.read(ppin);
+  if(PCFS[device]) {
 
+    if(device==0) val=PCF0.read(ppin);
+    if(device==1) val=PCF1.read(ppin);
+    if(device==2) val=PCF2.read(ppin);
+    if(device==3) val=PCF3.read(ppin);
+    if(device==4) val=PCF4.read(ppin);
+    if(device==5) val=PCF5.read(ppin);
+    if(device==6) val=PCF6.read(ppin);
+   if(device==7) val=PCF7.read(ppin);
+  }
+ // else Serial.printf("PCF%d offline\r\n",device);
   //Serial.printf("Read device %d pin %d as %d\r\n",device,ppin,val);
 
   return val;
 }
 
-void PairScan(void) {
+String PairScan(void) {
+  String pairscan;
+  char sbuffer[10];
   // set all pins high
-  for(int index=0;index<64;index++) {
+  for(int index=0;index<80;index++) {
     WritePCF(index,1);
   }
 
-  for(int outpin=0;outpin<64;outpin++) {
+  for(int outpin=0;outpin<80;outpin++) {
     WritePCF(outpin,0);
     Serial.printf("%02d",outpin);
-    for(int inpin=0;inpin<64;inpin++)
+    sprintf(sbuffer,"%02d",outpin);
+    pairscan=pairscan+sbuffer;
+    for(int inpin=0;inpin<80;inpin++)
     {
       if(inpin!=outpin)
-        if(ReadPCF(inpin)==0) Serial.printf(",%02d",inpin);
+        if(ReadPCF(inpin)==0)
+        {
+          Serial.printf(",%02d",inpin);
+          sprintf(sbuffer,",%02d",outpin);
+          pairscan=pairscan+sbuffer;
+        }
     }
     Serial.println();
+    pairscan=pairscan+"\r\n";
     WritePCF(outpin,1);
   }
+  return pairscan;
 }
 
 int ComparisonResult[64*4];
@@ -419,7 +440,6 @@ String ComparisonScan() {
 
     }
 
-
     WritePCF(outpin,0);
     for(cdex=0;cdex<4;cdex++) comparison[cdex]=-1;
     cdex=0;
@@ -450,7 +470,6 @@ String ComparisonScan() {
         PinDescriptions[comparison[0]*3],PinDescriptions[comparison[0]*3+1],PinDescriptions[comparison[0]*3+2]);
 
       results=results+sbuffer;
-
 
       errorcount++;
     }
@@ -504,10 +523,10 @@ Serial.print("PCF8575_LIB_VERSION:\t");
   MDNS.addService("http", "tcp", 80);
   Serial.println("HTTP service added");
 
-  pinMode(14,OUTPUT);
-  pinMode(32,OUTPUT);
-  pinMode(15,OUTPUT);
-
+  pinMode(RED_LED,OUTPUT);
+  pinMode(GREEN_LED,OUTPUT);
+  pinMode(WHITE_LED,OUTPUT);
+  pinMode(SCAN_BUTTON,INPUT_PULLUP);
 
   WritePCF(64+5,1);
   WritePCF(64+6,0);
@@ -518,6 +537,7 @@ Serial.print("PCF8575_LIB_VERSION:\t");
  // Serial.println(ComparisonScan());
  int tBytes = SPIFFS.totalBytes(); int uBytes = SPIFFS.usedBytes();
  Serial.printf("SPIFFS Total: %d Used: %d Free: %d\r\n",tBytes,uBytes,tBytes-uBytes);
+ PairScan();
 }
 
 int last=0;

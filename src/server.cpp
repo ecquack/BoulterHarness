@@ -91,7 +91,7 @@ int serveFile(char *filename,int plaintext)
 void handleNotFound() {  // 404
  String filename=server.uri();
   if(serveFile((char *)filename.c_str(),0)) {
-    String message = "<!DOCTYPE html><html><head><title>Hot Tub</title></head><body>";
+    String message = "<!DOCTYPE html><html><head><title>Boulter Tester</title></head><body>";
     message +="<h1>404</h1><pre>";
     message +="File Not Found\n\n";
     message += "URI: ";
@@ -241,6 +241,14 @@ void RefreshMap() {
 
 }
 
+extern String PairScan(void);
+
+void PairScanner() {
+  String pairscan=PairScan();
+  //String pairscan="Blah blah buh-lah";
+  server.send(200,"text/plain",pairscan);
+}
+
 void InitServer(void){
   
   server.enableCORS();
@@ -253,7 +261,6 @@ void InitServer(void){
   server.on("/logoblack.png",   [](){ handleFilename((char *)"/logoblack.png",  PNG_FILE);    });
   server.on("/favicon.ico",     [](){ handleFilename((char *)"/favicon.ico",    PNG_FILE);    });
 
-
   server.on("/setpin",            SetPin       );
   server.on("/getpin",            GetPin       );
   server.on("/getmap",            GetMap       );
@@ -261,6 +268,7 @@ void InitServer(void){
   server.on("/scanmap",           ScanMap      );
   server.on("/scanreport",        ScanReport   );
   server.on("/refresh",           RefreshMap   );
+  server.on("/pairscan",          PairScanner  );
 
 //server.on("/writeone",          WriteOne      );
  
